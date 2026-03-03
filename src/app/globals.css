@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts - these will be replaced with brand fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Brand colors - replaced by the generator */
+  --brand-primary: {{PRIMARY_COLOR}};
+  --brand-accent: {{ACCENT_COLOR}};
+  --brand-button: {{BUTTON_COLOR}};
+  --brand-button-text: {{BUTTON_TEXT_COLOR}};
+  --brand-announcement-bg: {{ANNOUNCEMENT_BG}};
+  --brand-background: #ffffff;
+  --brand-foreground: #1a1a1a;
+
+  /* Brand fonts - replaced by the generator */
+  --font-heading: '{{HEADING_FONT}}', serif;
+  --font-body: '{{BODY_FONT}}', sans-serif;
+  --font-logo: '{{LOGO_FONT}}', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--brand-foreground);
+  background-color: var(--brand-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Hide scrollbar for horizontal scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+/* Brand button styles */
+.btn-primary {
+  background-color: var(--brand-button);
+  color: var(--brand-button-text);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Announcement bar */
+.announcement-bar {
+  background-color: var(--brand-announcement-bg);
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+/* Custom selection color */
+::selection {
+  background-color: var(--brand-accent);
+  color: white;
+}
+
+/* Logo styling */
+.brand-logo {
+  font-family: var(--font-logo);
+  letter-spacing: 0.05em;
+}
