@@ -7,13 +7,12 @@ export const maxDuration = 120;
 async function buildCompositeImage(
     items: Array<{ name: string; buffer: Buffer }>,
     cellWidth = 732,
-    cellHeight = 935,
+    cellHeight = 887,
     cols = 2
 ): Promise<Buffer> {
     const rows = Math.ceil(items.length / cols);
     const padding = 16;
-    const labelHeight = 48;
-    const imgAreaHeight = cellHeight - labelHeight - padding * 2;
+    const imgAreaHeight = cellHeight - padding * 2;
     const canvasWidth = cols * cellWidth;
     const canvasHeight = rows * cellHeight;
 
@@ -25,7 +24,6 @@ async function buildCompositeImage(
         const x = col * cellWidth;
         const y = row * cellHeight;
 
-        // Resize the product image to fit the cell, maintaining aspect ratio
         const resized = await sharp(items[i].buffer)
             .resize(cellWidth - padding * 2, imgAreaHeight, { fit: "contain", background: { r: 255, g: 255, b: 255, alpha: 1 } })
             .png()
@@ -35,26 +33,6 @@ async function buildCompositeImage(
             input: resized,
             left: x + padding,
             top: y + padding,
-        });
-
-        // Create a text label as an SVG overlay
-        const escapedName = items[i].name
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-        const labelSvg = Buffer.from(`
-            <svg width="${cellWidth - padding * 2}" height="${labelHeight}">
-                <rect width="100%" height="100%" fill="white"/>
-                <text x="${(cellWidth - padding * 2) / 2}" y="${labelHeight / 2 + 6}"
-                    font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold"
-                    fill="#222" text-anchor="middle">${escapedName}</text>
-            </svg>
-        `);
-
-        composites.push({
-            input: labelSvg,
-            left: x + padding,
-            top: y + padding + imgAreaHeight,
         });
     }
 
@@ -182,14 +160,12 @@ export async function POST(request: NextRequest) {
         if (hasAccessories) {
             // Build a single composite image of all accessories
             const cols = accessoryBuffers.length <= 2 ? accessoryBuffers.length : 2;
-            const compositeBuffer = await buildCompositeImage(accessoryBuffers, 732, 935, cols);
+            const compositeBuffer = await buildCompositeImage(accessoryBuffers, 732, 887, cols);
             const compositeBase64 = compositeBuffer.toString("base64");
 
             compositeSection = `
 ## ACCESSORIES (IMAGE 3 — COMPOSITE GRID)
-IMAGE 3 is a labeled grid showing ALL accessories the subject must wear. Each cell contains:
-- A product photo showing the EXACT item
-- A text label with the item name
+IMAGE 3 is a grid showing ALL accessories the subject must wear. Each cell contains a product photo.
 
 Items in the grid:
 ${accessoryList}
@@ -207,7 +183,7 @@ For EACH item in the grid:
 ## IMAGE MANIFEST
 - IMAGE 1: THE SUBJECT — reproduce this exact person
 - IMAGE 2: ${garmentName} in ${colorName} — MAIN GARMENT
-- IMAGE 3: ACCESSORIES GRID — labeled composite of all additional items
+- IMAGE 3: ACCESSORIES GRID — composite of all additional items
 
 ## IDENTITY PRESERVATION (HIGHEST PRIORITY)
 The person in IMAGE 1 is the subject. Your output MUST show this EXACT person:
@@ -243,7 +219,7 @@ ${requiresFullBody ? "- The complete lower body including footwear MUST be in fr
                 { inlineData: { mimeType: userImageMimeType, data: userImageBase64 } },
                 { text: `IMAGE 2 — ${garmentName} in ${colorName} (MAIN GARMENT — match this color and design):` },
                 { inlineData: { mimeType: garmentMimeType, data: garmentImageBase64 } },
-                { text: "IMAGE 3 — ACCESSORIES GRID (each cell is labeled — the subject must wear ALL items shown, matching each item's exact color):" },
+                { text: "IMAGE 3 — ACCESSORIES GRID (the subject must wear ALL items shown, matching each item's exact color):" },
                 { inlineData: { mimeType: "image/png", data: compositeBase64 } },
             );
         } else {
