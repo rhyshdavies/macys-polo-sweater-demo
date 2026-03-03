@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
             config: {
                 personGeneration: "allow_adult",
                 aspectRatio: "9:16",
+                numberOfSeconds: 4,
             }
         });
 
