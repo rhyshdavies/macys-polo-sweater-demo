@@ -345,7 +345,7 @@ export function TryOnModal({
                                                     key={color.id}
                                                     onClick={() => setActiveColor(color)}
                                                     className={`w-8 h-8 rounded-full transition-all ${activeColor?.id === color.id ? "ring-2 ring-offset-2 scale-110" : "hover:scale-105 ring-1 ring-gray-200"}`}
-                                                    style={{ backgroundColor: color.hex, ringColor: activeColor?.id === color.id ? brandPrimaryColor : undefined }}
+                                                    style={{ backgroundColor: color.hex, outlineColor: activeColor?.id === color.id ? brandPrimaryColor : undefined } as React.CSSProperties}
                                                     title={color.name}
                                                 />
                                             ))}
